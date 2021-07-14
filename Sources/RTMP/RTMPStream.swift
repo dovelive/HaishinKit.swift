@@ -405,17 +405,14 @@ open class RTMPStream: NetStream {
 
     open func appendFile(_ file: URL, completionHandler: MP4Sampler.Handler? = nil) {
         lockQueue.async {
-            if self.sampler == nil {
-                self.sampler = MP4Sampler()
-                self.sampler?.delegate = self.muxer
-                switch self.readyState {
-                case .publishing:
-                    self.sampler?.startRunning()
-                default:
-                    break
-                }
+            if self.sampler != nil {
+                self.sampler?.stopRunning()
+                self.sampler = nil
             }
+            self.sampler = MP4Sampler()
+            self.sampler?.delegate = self.muxer
             self.sampler?.appendFile(file, completionHandler: completionHandler)
+            self.sampler?.startRunning()
         }
     }
 
@@ -480,7 +477,6 @@ open class RTMPStream: NetStream {
             mixer.videoIO.encoder.delegate = nil
             mixer.audioIO.encoder.stopRunning()
             mixer.videoIO.encoder.stopRunning()
-            sampler?.stopRunning()
             mixer.recorder.stopRunning()
         default:
             break
@@ -527,7 +523,6 @@ open class RTMPStream: NetStream {
             send(handlerName: "@setDataFrame", arguments: "onMetaData", createMetaData())
             mixer.audioIO.encoder.startRunning()
             mixer.videoIO.encoder.startRunning()
-            sampler?.startRunning()
             if howToPublish == .localRecord {
                 mixer.recorder.fileName = FilenameUtil.fileName(resourceName: info.resourceName)
                 mixer.recorder.startRunning()
