@@ -79,6 +79,12 @@ final class LiveViewController: UIViewController, UIDocumentPickerDelegate {
         logger.info("viewWillAppear")
         super.viewWillAppear(animated)
         
+        #if true
+        let videoURL = Bundle.main.url(forResource: "2", withExtension: "mp4")!
+        rtmpStream.appendFile(videoURL)
+
+        #else
+        
         #if false
         
         rtmpStream.attachAudio(AVCaptureDevice.default(for: .audio)) { error in
@@ -126,6 +132,8 @@ final class LiveViewController: UIViewController, UIDocumentPickerDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidReachEnd), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: self.player?.currentItem)
         player?.play()
         rtmpStream.attachPlayer(ImageSourceSession(avPlayerItem: playerItem, avPlayerItemOutput: playerOutput, size: self.view!.bounds.size))
+        
+        #endif
         
         #endif
         
