@@ -341,6 +341,10 @@
 		29FD1B5022FF13190095A0BE /* VTSessionPropertyKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29FD1B4F22FF13190095A0BE /* VTSessionPropertyKey.swift */; };
 		29FD1B5122FF13190095A0BE /* VTSessionPropertyKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29FD1B4F22FF13190095A0BE /* VTSessionPropertyKey.swift */; };
 		29FD1B5222FF13190095A0BE /* VTSessionPropertyKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29FD1B4F22FF13190095A0BE /* VTSessionPropertyKey.swift */; };
+		7E57BF1D267C42B8008222F5 /* ImageSourceVideoIOComponent+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E57BF1A267C42B8008222F5 /* ImageSourceVideoIOComponent+Extension.swift */; };
+		7E57BF1E267C42B8008222F5 /* ImageSourceSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E57BF1B267C42B8008222F5 /* ImageSourceSession.swift */; };
+		7E57BF1F267C42B8008222F5 /* ImageSourceNetStream+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E57BF1C267C42B8008222F5 /* ImageSourceNetStream+Extension.swift */; };
+		7E57C063267D09AE008222F5 /* 1.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 7E57C062267D09AE008222F5 /* 1.mp4 */; };
 		BC0D236D26331BAB001DDA0C /* NetSocket.CircularBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0D236C26331BAB001DDA0C /* NetSocket.CircularBuffer.swift */; };
 		BC0D236E26331BAB001DDA0C /* NetSocket.CircularBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0D236C26331BAB001DDA0C /* NetSocket.CircularBuffer.swift */; };
 		BC0D236F26331BAB001DDA0C /* NetSocket.CircularBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0D236C26331BAB001DDA0C /* NetSocket.CircularBuffer.swift */; };
@@ -683,6 +687,10 @@
 		29F6F4841DFB83E200920A3A /* RTMPHandshake.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RTMPHandshake.swift; sourceTree = "<group>"; };
 		29F97F232336A4FA00A4C317 /* SettingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTests.swift; sourceTree = "<group>"; };
 		29FD1B4F22FF13190095A0BE /* VTSessionPropertyKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VTSessionPropertyKey.swift; sourceTree = "<group>"; };
+		7E57BF1A267C42B8008222F5 /* ImageSourceVideoIOComponent+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ImageSourceVideoIOComponent+Extension.swift"; sourceTree = "<group>"; };
+		7E57BF1B267C42B8008222F5 /* ImageSourceSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageSourceSession.swift; sourceTree = "<group>"; };
+		7E57BF1C267C42B8008222F5 /* ImageSourceNetStream+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ImageSourceNetStream+Extension.swift"; sourceTree = "<group>"; };
+		7E57C062267D09AE008222F5 /* 1.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1.mp4; sourceTree = "<group>"; };
 		BC0D236C26331BAB001DDA0C /* NetSocket.CircularBuffer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetSocket.CircularBuffer.swift; sourceTree = "<group>"; };
 		BC20DF2B2503747E007BC608 /* HKPictureInPicureControllerPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HKPictureInPicureControllerPosition.swift; sourceTree = "<group>"; };
 		BC20DF33250374EA007BC608 /* HKPictureInPicureController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HKPictureInPicureController+Extension.swift"; sourceTree = "<group>"; };
@@ -897,6 +905,7 @@
 		2945CBB31B4BE66000104112 = {
 			isa = PBXGroup;
 			children = (
+				7E57BF19267C4212008222F5 /* Extensions */,
 				2981E1301D646E3F00E8F7CA /* Cartfile */,
 				2927A2991E7ED2D70044AF91 /* LICENSE.md */,
 				2997BDD31D50D31B000AF900 /* README.md */,
@@ -1039,6 +1048,7 @@
 		2968973F1CDB01AD0074D5F0 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				7E57C062267D09AE008222F5 /* 1.mp4 */,
 				296897431CDB01D20074D5F0 /* Info.plist */,
 				291F4E361CF206E200F59C51 /* Icon.png */,
 				29205CBD1E461F4E009D3FFF /* Main.storyboard */,
@@ -1210,6 +1220,16 @@
 				BC83A4722403D83B006BDE06 /* VTCompressionSession+Extension.swift */,
 			);
 			path = Extension;
+			sourceTree = "<group>";
+		};
+		7E57BF19267C4212008222F5 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				7E57BF1B267C42B8008222F5 /* ImageSourceSession.swift */,
+				7E57BF1C267C42B8008222F5 /* ImageSourceNetStream+Extension.swift */,
+				7E57BF1A267C42B8008222F5 /* ImageSourceVideoIOComponent+Extension.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		BC20DF2A25037454007BC608 /* PiP */ = {
@@ -1456,7 +1476,6 @@
 					};
 					2945CBBC1B4BE66000104112 = {
 						CreatedOnToolsVersion = 6.4;
-						DevelopmentTeam = SUEQ2SZ2L5;
 						LastSwiftMigration = 1020;
 					};
 					29798E581CE60E5300F5CBD0 = {
@@ -1560,6 +1579,7 @@
 			files = (
 				291F4E381CF206E600F59C51 /* Icon.png in Resources */,
 				296897651CDB028C0074D5F0 /* Assets.xcassets in Resources */,
+				7E57C063267D09AE008222F5 /* 1.mp4 in Resources */,
 				296897661CDB028C0074D5F0 /* LaunchScreen.storyboard in Resources */,
 				295074301E4620FF007F15A4 /* Main.storyboard in Resources */,
 			);
@@ -1636,6 +1656,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				295891161EEB8DFC00CE51E1 /* FLVTagType.swift in Sources */,
+				7E57BF1D267C42B8008222F5 /* ImageSourceVideoIOComponent+Extension.swift in Sources */,
 				29B876B11CD70B2800FC07DA /* RTMPMessage.swift in Sources */,
 				2941746B22D069B300A2944F /* AudioEffect.swift in Sources */,
 				BCB9773F2621812800C9A649 /* AVCFormatStream.swift in Sources */,
@@ -1695,6 +1716,7 @@
 				29B876851CD70AE800FC07DA /* NALUnit.swift in Sources */,
 				29EA87ED1E79A3E30043A5F8 /* CVPixelBuffer+Extension.swift in Sources */,
 				2958912A1EEB8F1D00CE51E1 /* FLVSoundSize.swift in Sources */,
+				7E57BF1F267C42B8008222F5 /* ImageSourceNetStream+Extension.swift in Sources */,
 				29EA87DC1E79A0460043A5F8 /* Data+Extension.swift in Sources */,
 				29DF20622312A3DD004057C3 /* RTMPNWSocket.swift in Sources */,
 				29B876BD1CD70B3900FC07DA /* CRC32.swift in Sources */,
@@ -1738,6 +1760,7 @@
 				2942424D1CF4C01300D65DCB /* MD5.swift in Sources */,
 				29EA87D31E799F360043A5F8 /* ExpressibleByIntegerLiteral+Extension.swift in Sources */,
 				29B8767A1CD70ACE00FC07DA /* M3U.swift in Sources */,
+				7E57BF1E267C42B8008222F5 /* ImageSourceSession.swift in Sources */,
 				29245AEF1D32348400AFFB9A /* VideoGravityUtil.swift in Sources */,
 				29FD1B5022FF13190095A0BE /* VTSessionPropertyKey.swift in Sources */,
 				29B876901CD70AFE00FC07DA /* AudioIOComponent.swift in Sources */,
@@ -2115,7 +2138,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = SUEQ2SZ2L5;
+				DEVELOPMENT_TEAM = DGV42FVNC4;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "$(SRCROOT)/Examples/iOS/Screencast/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2143,7 +2166,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = SUEQ2SZ2L5;
+				DEVELOPMENT_TEAM = DGV42FVNC4;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "$(SRCROOT)/Examples/iOS/Screencast/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -2285,7 +2308,7 @@
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = SUEQ2SZ2L5;
+				DEVELOPMENT_TEAM = DGV42FVNC4;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2319,7 +2342,7 @@
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = SUEQ2SZ2L5;
+				DEVELOPMENT_TEAM = DGV42FVNC4;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2458,7 +2481,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = SUEQ2SZ2L5;
+				DEVELOPMENT_TEAM = DGV42FVNC4;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 arm64e armv7";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -2489,7 +2512,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = SUEQ2SZ2L5;
+				DEVELOPMENT_TEAM = DGV42FVNC4;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "$(SRCROOT)/Examples/iOS/Info.plist";

@@ -283,6 +283,17 @@ final class VideoIOComponent: IOComponent {
     #endif
 
     #if os(iOS)
+    var imageSession: ImageSourceCaptureSession? {
+        didSet {
+            if let oldValue: ImageSourceCaptureSession = oldValue {
+                oldValue.delegate = nil
+            }
+            if let imageSession: ImageSourceCaptureSession = imageSession {
+                imageSession.delegate = self
+            }
+        }
+    }
+    
     var screen: CustomCaptureSession? = nil {
         didSet {
             if let oldValue: CustomCaptureSession = oldValue {
@@ -322,6 +333,7 @@ final class VideoIOComponent: IOComponent {
         }
         #if os(iOS)
         screen = nil
+        imageSession = nil
         #endif
 
         input = try AVCaptureDeviceInput(device: camera)

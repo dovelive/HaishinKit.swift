@@ -3,6 +3,7 @@ import HaishinKit
 import Photos
 import UIKit
 import VideoToolbox
+import MobileCoreServices
 
 final class ExampleRecorderDelegate: DefaultAVRecorderDelegate {
     static let `default` = ExampleRecorderDelegate()
@@ -23,7 +24,7 @@ final class ExampleRecorderDelegate: DefaultAVRecorderDelegate {
     }
 }
 
-final class LiveViewController: UIViewController {
+final class LiveViewController: UIViewController, UIDocumentPickerDelegate {
     private static let maxRetryCount: Int = 5
 
     @IBOutlet private weak var lfView: MTHKView!
@@ -72,19 +73,63 @@ final class LiveViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(didBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
     }
 
+    var player: AVPlayer?
+    
     override func viewWillAppear(_ animated: Bool) {
         logger.info("viewWillAppear")
         super.viewWillAppear(animated)
         rtmpStream.attachAudio(AVCaptureDevice.default(for: .audio)) { error in
             logger.warn(error.description)
         }
+        
+        #if false
+        
         rtmpStream.attachCamera(DeviceUtil.device(withPosition: currentPosition)) { error in
             logger.warn(error.description)
         }
+        
+        #elseif false
+        
+        let image = UIImage(named: "Icon.png")!
+        NSLog("%f, %f", image.size.width, image.size.height)
+        rtmpStream.attachImage(ImageSourceSession(imageToCapture: image))
+        
+        #else
+        
+        let videoURL = Bundle.main.url(forResource: "1", withExtension: "mp4")!
+        let asset = AVAsset(url: videoURL)
+        let playerItem = AVPlayerItem(asset:asset)
+        
+        // Setup AVPlayerItemVideoOutput with the required pixelbuffer attributes.
+        let pixBuffAttributes: [String : AnyObject] = [kCVPixelBufferPixelFormatTypeKey as String :  Int(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange) as AnyObject] // kCVPixelFormatType_32BGRA
+        let playerOutput = AVPlayerItemVideoOutput(pixelBufferAttributes: pixBuffAttributes)
+        playerItem.add(playerOutput)
+        
+        player = AVPlayer(playerItem: playerItem)
+        if false {
+            var playerLayer: AVPlayerLayer?
+            playerLayer = AVPlayerLayer(player: player)
+            playerLayer!.frame = self.view!.bounds
+            self.view!.layer.addSublayer(playerLayer!)
+        }
+        
+        // Observe end
+        NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidReachEnd), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: self.player?.currentItem)
+        player?.play()
+        rtmpStream.attachPlayer(ImageSourceSession(avPlayerItem: playerItem, avPlayerItemOutput: playerOutput, size: self.view!.bounds.size))
+        
+        #endif
+        
         rtmpStream.addObserver(self, forKeyPath: "currentFPS", options: .new, context: nil)
         lfView?.attachStream(rtmpStream)
     }
-
+    
+    // MARK: - Loop video when ended.
+    @objc func playerItemDidReachEnd(notification: NSNotification) {
+        self.player?.seek(to: CMTime.zero)
+        self.player?.play()
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         logger.info("viewWillDisappear")
         super.viewWillDisappear(animated)
@@ -107,6 +152,44 @@ final class LiveViewController: UIViewController {
         rtmpStream.torch.toggle()
     }
 
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        // TODO
+        print(urls)
+    }
+
+     func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+        controller.dismiss(animated: true, completion: nil)
+    }
+
+    // https://stackoverflow.com/questions/37296929/implement-document-picker-in-swift-ios
+    // As usual don't forget to add iCloud support:
+    @IBAction func selectFile(_ sender: UIButton) {
+        let types = [kUTTypeMPEG4, kUTTypeJPEG, kUTTypePNG, kUTTypeGIF, kUTTypeBMP]
+        let importMenu = UIDocumentPickerViewController(documentTypes: types as [String], in: .import)
+
+        if #available(iOS 11.0, *) {
+            importMenu.allowsMultipleSelection = true
+        }
+
+        importMenu.delegate = self
+        importMenu.modalPresentationStyle = .formSheet
+        
+        #if false
+        if #available(iOS 11.0, *) {
+            importMenu.allowsMultipleSelection = false
+        } else {
+            // Fallback on earlier versions
+        }
+        if #available(iOS 13.0, *) {
+            importMenu.shouldShowFileExtensions = true
+        } else {
+            // Fallback on earlier versions
+        }
+        #endif
+
+        present(importMenu, animated: true)
+    }
+    
     @IBAction func on(slider: UISlider) {
         if slider == audioBitrateSlider {
             audioBitrateLabel?.text = "audio \(Int(slider.value))/kbps"
