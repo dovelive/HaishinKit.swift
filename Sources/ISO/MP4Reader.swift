@@ -567,6 +567,8 @@ final class MP4Reader: MP4ContainerBox {
 
 // MARK: -
 final class MP4TrakReader {
+    public typealias Handler = () -> Void
+    
     static let defaultBufferTime: Double = 500
 
     var trak: MP4Box
@@ -575,6 +577,8 @@ final class MP4TrakReader {
 
     private var id: Int = 0
     private var handle: FileHandle?
+    private var callbackFunc: Handler? = nil
+    
     private lazy var timerDriver: TimerDriver = {
         var timerDriver = TimerDriver()
         timerDriver.delegate = self
@@ -603,9 +607,10 @@ final class MP4TrakReader {
     private var timeToSample: [UInt32] = []
     private var totalTimeToSample: UInt32 = 0
 
-    init(id: Int, trak: MP4Box) {
+    init(id: Int, trak: MP4Box, callbackFunc: Handler?) {
         self.id = id
         self.trak = trak
+        self.callbackFunc = callbackFunc
 
         let mdhd: MP4Box? = trak.getBoxes(byName: "mdhd").first
         if let mdhd: MP4MediaHeaderBox = mdhd as? MP4MediaHeaderBox {
@@ -711,6 +716,7 @@ extension MP4TrakReader: TimerDriverDelegate {
             next()
         } else {
             driver.stopRunning()
+            callbackFunc?()
         }
     }
 }

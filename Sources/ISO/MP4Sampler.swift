@@ -12,8 +12,9 @@ public class MP4Sampler {
 
     weak var delegate: MP4SamplerDelegate?
 
-    private var files: [URL] = []
-    private var handlers: [URL: Handler?] = [:]
+    private var fileOrg: URL? = nil
+    private var file: URL? = nil
+    private var handler: Handler? = nil
     private let lockQueue = DispatchQueue(label: "com.haishinkit.HaishinKit.MP4Sampler.lock")
     private let loopQueue = DispatchQueue(label: "com.haishinkit.HaishinKit.MP4Sampler.loop")
     private let operations = OperationQueue()
@@ -21,8 +22,8 @@ public class MP4Sampler {
 
     func appendFile(_ file: URL, completionHandler: Handler? = nil) {
         lockQueue.async {
-            self.handlers[file] = completionHandler
-            self.files.append(file)
+            self.handler = completionHandler
+            self.fileOrg = file
         }
     }
 
@@ -39,7 +40,11 @@ public class MP4Sampler {
         delegate?.didOpen(reader)
         let traks: [MP4Box] = reader.getBoxes(byName: "trak")
         for i in 0..<traks.count {
-            let trakReader = MP4TrakReader(id: i, trak: traks[i])
+            var callBackFunc: Handler? = nil
+            if i == 0 {
+                callBackFunc = rewindMP4File
+            }
+            let trakReader = MP4TrakReader(id: i, trak: traks[i], callbackFunc: callBackFunc)
             trakReader.delegate = delegate
             operations.addOperation {
                 trakReader.execute(reader)
@@ -49,16 +54,17 @@ public class MP4Sampler {
 
         reader.close()
     }
+    
+    public func rewindMP4File() {
+        file = fileOrg
+    }
 
     private func run() {
-        if files.isEmpty {
+        if (file == nil) {
             return
         }
-        let url: URL = files.first!
-        let handler: Handler? = handlers[url]!
-        files.remove(at: 0)
-        handlers[url] = nil
-        execute(url: url)
+        execute(url: file!)
+        file = nil
         handler?()
     }
 }
@@ -66,12 +72,13 @@ public class MP4Sampler {
 extension MP4Sampler: Running {
     // MARK: Running
     public func startRunning() {
+        file = fileOrg
         loopQueue.async {
             self.isRunning.mutate { $0 = true }
             while self.isRunning.value {
                 self.lockQueue.sync {
                     self.run()
-                    if self.files.isEmpty {
+                    if self.file == nil {
                         sleep(1)
                     }
                 }
