@@ -37,5 +37,5 @@ extension MP4AVCConfigurationBox: DataConvertible {
 }
 
 extension MP4Box.Names {
-    static let avcC = MP4Box.Name<MP4PixelAspectRatioBox>(rawValue: "avcC")
+    static let avcC = MP4Box.Name<MP4AVCConfigurationBox>(rawValue: "avcC")
 }

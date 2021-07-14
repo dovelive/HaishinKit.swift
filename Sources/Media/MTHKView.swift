@@ -29,7 +29,9 @@ open class MTHKView: MTKView, NetStreamRenderer {
         didSet {
             oldValue?.mixer.videoIO.renderer = nil
             if let currentStream = currentStream {
-                currentStream.mixer.videoIO.context = CIContext(mtlDevice: device!)
+                if (device != nil) {
+                    currentStream.mixer.videoIO.context = CIContext(mtlDevice: device!)
+                }
                 currentStream.lockQueue.async {
                     currentStream.mixer.videoIO.renderer = self
                     currentStream.mixer.startRunning()

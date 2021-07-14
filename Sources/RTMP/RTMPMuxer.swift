@@ -79,3 +79,44 @@ extension RTMPMuxer: VideoEncoderDelegate {
         videoTimeStamp = decodeTimeStamp
     }
 }
+
+extension RTMPMuxer: MP4SamplerDelegate {
+    func didSet(config: Data, withID: Int, type: AVMediaType) {
+        guard configs[withID] != config else {
+            return
+        }
+        configs[withID] = config
+        switch type {
+        case .video:
+            var buffer = Data([FLVFrameType.key.rawValue << 4 | FLVVideoCodec.avc.rawValue, FLVAVCPacketType.seq.rawValue, 0, 0, 0])
+            buffer.append(config)
+            delegate?.sampleOutput(video: buffer, withTimestamp: 0, muxer: self)
+        case .audio:
+            if withID != 1 {
+                break
+            }
+            var buffer = Data([RTMPMuxer.aac, FLVAACPacketType.seq.rawValue])
+            buffer.append(config)
+            delegate?.sampleOutput(audio: buffer, withTimestamp: 0, muxer: self)
+        default:
+            break
+        }
+    }
+
+    func output(data: Data, withID: Int, currentTime: Double, keyframe: Bool) {
+        switch withID {
+        case 0:
+            let compositionTime: Int32 = 0
+            var buffer = Data([((keyframe ? FLVFrameType.key.rawValue : FLVFrameType.inter.rawValue) << 4) | FLVVideoCodec.avc.rawValue, FLVAVCPacketType.nal.rawValue])
+            buffer.append(contentsOf: compositionTime.bigEndian.data[1..<4])
+            buffer.append(data)
+            delegate?.sampleOutput(video: buffer, withTimestamp: currentTime, muxer: self)
+        case 1:
+            var buffer = Data([RTMPMuxer.aac, FLVAACPacketType.raw.rawValue])
+            buffer.append(data)
+            delegate?.sampleOutput(audio: buffer, withTimestamp: currentTime, muxer: self)
+        default:
+            break
+        }
+    }
+}

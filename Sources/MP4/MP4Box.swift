@@ -58,11 +58,13 @@ extension MP4Box: DataConvertible {
                     children.removeAll()
                     while 0 < buffer.bytesAvailable {
                         let size = try buffer.readInt32()
-                        _ = try buffer.readBytes(4)
-                        buffer.position -= 8
-                        var child = MP4Box()
-                        child.data = try buffer.readBytes(Int(size))
-                        children.append(child)
+                        if (size > 0) {
+                            _ = try buffer.readBytes(4)
+                            buffer.position -= 8
+                            var child = MP4Box()
+                            child.data = try buffer.readBytes(Int(size))
+                            children.append(child)
+                        }
                     }
                 }
             } catch {

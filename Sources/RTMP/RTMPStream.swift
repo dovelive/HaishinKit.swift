@@ -258,6 +258,7 @@ open class RTMPStream: NetStream {
     var audioTimestamp: Double = 0.0
     var videoTimestamp: Double = 0.0
     private let muxer = RTMPMuxer()
+    private var sampler: MP4Sampler?
     private var messages: [RTMPCommandMessage] = []
     private var frameCount: UInt16 = 0
     private var dispatcher: IEventDispatcher!
@@ -404,6 +405,22 @@ open class RTMPStream: NetStream {
         }
     }
 
+    open func appendFile(_ file: URL, completionHandler: MP4Sampler.Handler? = nil) {
+        lockQueue.async {
+            if self.sampler == nil {
+                self.sampler = MP4Sampler()
+                self.sampler?.delegate = self.muxer
+                switch self.readyState {
+                case .publishing:
+                    self.sampler?.startRunning()
+                default:
+                    break
+                }
+            }
+            self.sampler?.appendFile(file, completionHandler: completionHandler)
+        }
+    }
+
     open func createMetaData() -> ASObject {
         metadata.removeAll()
 #if os(iOS) || os(macOS)
@@ -465,6 +482,7 @@ open class RTMPStream: NetStream {
             mixer.videoIO.encoder.delegate = nil
             mixer.audioIO.encoder.stopRunning()
             mixer.videoIO.encoder.stopRunning()
+            sampler?.stopRunning()
             mixer.recorder.stopRunning()
         default:
             break
@@ -502,7 +520,7 @@ open class RTMPStream: NetStream {
             #endif
             mixer.audioIO.encoder.delegate = muxer
             mixer.videoIO.encoder.delegate = muxer
-            // sampler?.delegate = muxer
+            sampler?.delegate = muxer
             mixer.startRunning()
             videoWasSent = false
             audioWasSent = false
@@ -511,6 +529,7 @@ open class RTMPStream: NetStream {
             send(handlerName: "@setDataFrame", arguments: "onMetaData", createMetaData())
             mixer.audioIO.encoder.startRunning()
             mixer.videoIO.encoder.startRunning()
+            sampler?.startRunning()
             if howToPublish == .localRecord {
                 mixer.recorder.fileName = FilenameUtil.fileName(resourceName: info.resourceName)
                 mixer.recorder.startRunning()
