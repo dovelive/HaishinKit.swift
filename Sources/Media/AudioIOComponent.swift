@@ -21,6 +21,17 @@ final class AudioIOComponent: IOComponent, DisplayLinkedQueueClockReference {
             soundTransform.apply(playerNode)
         }
     }
+    
+    var audioFileSession: AudioFileSession? {
+        didSet {
+            if let oldValue: AudioFileSession = oldValue {
+                oldValue.delegate = nil
+            }
+            if let audioFileSession: AudioFileSession = audioFileSession {
+                audioFileSession.delegate = self
+            }
+        }
+    }
 
     private var _playerNode: AVAudioPlayerNode?
     private var playerNode: AVAudioPlayerNode! {
@@ -133,6 +144,20 @@ final class AudioIOComponent: IOComponent, DisplayLinkedQueueClockReference {
         output.setSampleBufferDelegate(self, queue: lockQueue)
     }
 
+    func attachAudioFile(_ audioFileSession: AudioFileSession?) {
+        guard let audioFileSession: AudioFileSession = audioFileSession else {
+            self.audioFileSession?.stopRunning()
+            self.audioFileSession = nil
+            return
+        }
+        
+        input = nil
+        output = nil
+        encoder.invalidate()
+        self.audioFileSession = audioFileSession
+        self.audioFileSession?.startRunning()
+    }
+
     func dispose() {
         input = nil
         output = nil
@@ -166,6 +191,12 @@ final class AudioIOComponent: IOComponent, DisplayLinkedQueueClockReference {
         encoder.delegate = nil
         encoder.stopRunning()
         currentBuffers.mutate { $0 = 0 }
+    }
+}
+
+extension AudioIOComponent: AudioFileOutputBufferDelegate {
+    func outputAudioFrame(sampleBuffer: CMSampleBuffer) {
+        appendSampleBuffer(sampleBuffer)
     }
 }
 

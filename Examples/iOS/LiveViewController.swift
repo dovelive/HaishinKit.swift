@@ -78,9 +78,18 @@ final class LiveViewController: UIViewController, UIDocumentPickerDelegate {
     override func viewWillAppear(_ animated: Bool) {
         logger.info("viewWillAppear")
         super.viewWillAppear(animated)
+        
+        #if false
+        
         rtmpStream.attachAudio(AVCaptureDevice.default(for: .audio)) { error in
             logger.warn(error.description)
         }
+        
+        #else
+        
+        rtmpStream.attachAudioFile(AudioFileSession(fileName: "test.wav"))
+        
+        #endif
         
         #if false
         

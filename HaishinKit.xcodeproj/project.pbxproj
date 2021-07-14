@@ -345,6 +345,8 @@
 		7E57BF1E267C42B8008222F5 /* ImageSourceSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E57BF1B267C42B8008222F5 /* ImageSourceSession.swift */; };
 		7E57BF1F267C42B8008222F5 /* ImageSourceNetStream+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E57BF1C267C42B8008222F5 /* ImageSourceNetStream+Extension.swift */; };
 		7E57C063267D09AE008222F5 /* 1.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 7E57C062267D09AE008222F5 /* 1.mp4 */; };
+		7E58C43E269AE68F00D6709C /* test.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7E58C43D269AE68F00D6709C /* test.wav */; };
+		7EBC00922699656700A09975 /* AudioFileSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EBC00912699656700A09975 /* AudioFileSession.swift */; };
 		BC0D236D26331BAB001DDA0C /* NetSocket.CircularBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0D236C26331BAB001DDA0C /* NetSocket.CircularBuffer.swift */; };
 		BC0D236E26331BAB001DDA0C /* NetSocket.CircularBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0D236C26331BAB001DDA0C /* NetSocket.CircularBuffer.swift */; };
 		BC0D236F26331BAB001DDA0C /* NetSocket.CircularBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0D236C26331BAB001DDA0C /* NetSocket.CircularBuffer.swift */; };
@@ -691,6 +693,8 @@
 		7E57BF1B267C42B8008222F5 /* ImageSourceSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageSourceSession.swift; sourceTree = "<group>"; };
 		7E57BF1C267C42B8008222F5 /* ImageSourceNetStream+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ImageSourceNetStream+Extension.swift"; sourceTree = "<group>"; };
 		7E57C062267D09AE008222F5 /* 1.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1.mp4; sourceTree = "<group>"; };
+		7E58C43D269AE68F00D6709C /* test.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = test.wav; sourceTree = "<group>"; };
+		7EBC00912699656700A09975 /* AudioFileSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioFileSession.swift; sourceTree = "<group>"; };
 		BC0D236C26331BAB001DDA0C /* NetSocket.CircularBuffer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetSocket.CircularBuffer.swift; sourceTree = "<group>"; };
 		BC20DF2B2503747E007BC608 /* HKPictureInPicureControllerPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HKPictureInPicureControllerPosition.swift; sourceTree = "<group>"; };
 		BC20DF33250374EA007BC608 /* HKPictureInPicureController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HKPictureInPicureController+Extension.swift"; sourceTree = "<group>"; };
@@ -1048,6 +1052,7 @@
 		2968973F1CDB01AD0074D5F0 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				7E58C43D269AE68F00D6709C /* test.wav */,
 				7E57C062267D09AE008222F5 /* 1.mp4 */,
 				296897431CDB01D20074D5F0 /* Info.plist */,
 				291F4E361CF206E200F59C51 /* Icon.png */,
@@ -1228,6 +1233,7 @@
 				7E57BF1B267C42B8008222F5 /* ImageSourceSession.swift */,
 				7E57BF1C267C42B8008222F5 /* ImageSourceNetStream+Extension.swift */,
 				7E57BF1A267C42B8008222F5 /* ImageSourceVideoIOComponent+Extension.swift */,
+				7EBC00912699656700A09975 /* AudioFileSession.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1577,6 +1583,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7E58C43E269AE68F00D6709C /* test.wav in Resources */,
 				291F4E381CF206E600F59C51 /* Icon.png in Resources */,
 				296897651CDB028C0074D5F0 /* Assets.xcassets in Resources */,
 				7E57C063267D09AE008222F5 /* 1.mp4 in Resources */,
@@ -1753,6 +1760,7 @@
 				29798E521CE5DF1A00F5CBD0 /* MP4Reader.swift in Sources */,
 				295747911E37AC1000EF056E /* RTMPStreamDelegate.swift in Sources */,
 				29B876AC1CD70B2800FC07DA /* AMF3Serializer.swift in Sources */,
+				7EBC00922699656700A09975 /* AudioFileSession.swift in Sources */,
 				2916196C1E7F0768009FB344 /* CMFormatDescription+Extension.swift in Sources */,
 				BCB976DF26107B5600C9A649 /* TSAdaptationField.swift in Sources */,
 				29B876921CD70AFE00FC07DA /* AVMixer.swift in Sources */,

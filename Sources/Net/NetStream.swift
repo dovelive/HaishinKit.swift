@@ -84,6 +84,16 @@ open class NetStream: NSObject {
         }
     }
 
+    open func attachAudioFile(_ audioFileSession: AudioFileSession, onError: ((_ error: NSError) -> Void)? = nil) {
+        lockQueue.async {
+            do {
+                try self.mixer.audioIO.attachAudioFile(audioFileSession)
+            } catch let error as NSError {
+                onError?(error)
+            }
+        }
+    }
+
     open func setPointOfInterest(_ focus: CGPoint, exposure: CGPoint) {
         mixer.videoIO.focusPointOfInterest = focus
         mixer.videoIO.exposurePointOfInterest = exposure
