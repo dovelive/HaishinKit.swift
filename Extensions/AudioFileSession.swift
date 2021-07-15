@@ -48,6 +48,8 @@ open class AudioFileSession: NSObject, AudioFileCaptureSession {
 #endif
     
     public init(fileName: String) {
+        super.init()
+        
         let filePath: String = Bundle.main.path(forResource: "test", ofType: "wav")!
         print("\(filePath)")
         do {
@@ -82,8 +84,6 @@ open class AudioFileSession: NSObject, AudioFileCaptureSession {
         } catch {
             logger.warn(error)
         }
-        
-        super.init()
     }
     
     @objc
