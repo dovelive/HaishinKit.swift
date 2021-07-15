@@ -36,6 +36,7 @@ open class AudioFileSession: NSObject, AudioFileCaptureSession {
     
     var audioFile: AVAudioFile?
     var audioFileBuffer: AVAudioPCMBuffer?
+    var cmSampleBuffer: CMSampleBuffer?
     var audioDuration: Double = 0
     var currentAudioTime: Double = 0
     
@@ -54,6 +55,8 @@ open class AudioFileSession: NSObject, AudioFileCaptureSession {
             audioFile = try AVAudioFile(forReading: fileURL as URL)
             audioFileBuffer = AVAudioPCMBuffer(pcmFormat: audioFile!.processingFormat, frameCapacity: UInt32(audioFile!.length))
             try audioFile!.read(into: audioFileBuffer!)
+            
+            cmSampleBuffer = createCMSampleBufferFromAudioBuffer(pcmBuffer: audioFileBuffer!, withPresentationTime: CMTime.zero)
             
             let item = AVPlayerItem(url: fileURL as URL)
             self.audioDuration = Double(item.asset.duration.value) / Double(item.asset.duration.timescale)
@@ -255,10 +258,7 @@ open class AudioFileSession: NSObject, AudioFileCaptureSession {
         
         let timeScale = audioFileBuffer!.format.streamDescription.pointee.mSampleRate
         
-        guard let cmSampleBuffer: CMSampleBuffer = createCMSampleBufferFromAudioBuffer(pcmBuffer: audioFileBuffer!, withPresentationTime: CMTimeMakeWithSeconds(displayLink.timestamp, preferredTimescale: Int32(timeScale))) else {
-            return
-        }
-        guard let audioBufferTmp: AVAudioPCMBuffer = createAudioSampleBufferFromCMBuffer(cmBuffer: cmSampleBuffer, startTimeOffset: self.currentAudioTime, timeInterval: self.timeInterval) else {
+        guard let audioBufferTmp: AVAudioPCMBuffer = createAudioSampleBufferFromCMBuffer(cmBuffer: cmSampleBuffer!, startTimeOffset: self.currentAudioTime, timeInterval: self.timeInterval) else {
             return
         }
         
