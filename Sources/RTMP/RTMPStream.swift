@@ -433,6 +433,16 @@ open class RTMPStream: NetStream {
 #endif
         return metadata
     }
+    
+    public enum PublishMediaKind: String {
+        case PublishMediaFromSavedFile = "media_saved_file"
+        case PublishMediaFromMixing = "media_mixing"
+    }
+    
+    private var currentPublishMediaKind: PublishMediaKind = PublishMediaKind.PublishMediaFromSavedFile
+    open func setPublishMediaKind(publishMediaKind: PublishMediaKind) {
+        self.currentPublishMediaKind = publishMediaKind
+    }
 
     func close(withLockQueue: Bool) {
         if withLockQueue {
@@ -475,6 +485,7 @@ open class RTMPStream: NetStream {
             #endif
             mixer.audioIO.encoder.delegate = nil
             mixer.videoIO.encoder.delegate = nil
+            sampler?.delegate = nil
             mixer.audioIO.encoder.stopRunning()
             mixer.videoIO.encoder.stopRunning()
             mixer.recorder.stopRunning()
@@ -512,9 +523,12 @@ open class RTMPStream: NetStream {
             #if os(iOS)
                 mixer.videoIO.screen?.startRunning()
             #endif
-            mixer.audioIO.encoder.delegate = muxer
-            mixer.videoIO.encoder.delegate = muxer
-            sampler?.delegate = muxer
+            if self.currentPublishMediaKind == PublishMediaKind.PublishMediaFromMixing {
+                mixer.audioIO.encoder.delegate = muxer
+                mixer.videoIO.encoder.delegate = muxer
+            } else if self.currentPublishMediaKind == PublishMediaKind.PublishMediaFromMixing {
+                sampler?.delegate = muxer
+            }
             mixer.startRunning()
             videoWasSent = false
             audioWasSent = false

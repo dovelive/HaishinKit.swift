@@ -80,10 +80,14 @@ final class LiveViewController: UIViewController, UIDocumentPickerDelegate {
         super.viewWillAppear(animated)
         
         #if false
+        
+        rtmpStream.setPublishMediaKind(publishMediaKind: RTMPStream.PublishMediaKind.PublishMediaFromSavedFile)
         let videoURL = Bundle.main.url(forResource: "2", withExtension: "mp4")!
         rtmpStream.appendFile(videoURL)
 
         #else
+        
+        rtmpStream.setPublishMediaKind(publishMediaKind: RTMPStream.PublishMediaKind.PublishMediaFromMixing)
         
         #if false
         
