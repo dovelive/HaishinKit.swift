@@ -86,11 +86,7 @@ open class NetStream: NSObject {
 
     open func attachAudioFile(_ audioFileSession: AudioFileSession, onError: ((_ error: NSError) -> Void)? = nil) {
         lockQueue.async {
-            do {
-                try self.mixer.audioIO.attachAudioFile(audioFileSession)
-            } catch let error as NSError {
-                onError?(error)
-            }
+            self.mixer.audioIO.attachAudioFile(audioFileSession)
         }
     }
 

@@ -332,8 +332,16 @@ final class VideoIOComponent: IOComponent {
             return
         }
         #if os(iOS)
-        screen = nil
-        imageSession = nil
+        if self.screen != nil {
+            self.screen?.stopRunning()
+            self.screen = nil
+            return
+        }
+        if self.imageSession != nil {
+            self.imageSession?.stopRunning()
+            self.imageSession = nil
+            return
+        }
         #endif
 
         input = try AVCaptureDeviceInput(device: camera)
