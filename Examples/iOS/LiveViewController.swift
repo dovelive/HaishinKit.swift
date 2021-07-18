@@ -79,7 +79,7 @@ final class LiveViewController: UIViewController, UIDocumentPickerDelegate {
         logger.info("viewWillAppear")
         super.viewWillAppear(animated)
         
-        #if true
+        #if false
         let videoURL = Bundle.main.url(forResource: "2", withExtension: "mp4")!
         rtmpStream.appendFile(videoURL)
 
@@ -93,7 +93,7 @@ final class LiveViewController: UIViewController, UIDocumentPickerDelegate {
         
         #else
         
-        rtmpStream.attachAudioFile(AudioFileSession(fileName: "test.wav"))
+        rtmpStream.attachAudioFile(AudioFileSession(fileURL: URL(string: "test.wav")!))
         
         #endif
         

@@ -47,20 +47,17 @@ open class AudioFileSession: NSObject, AudioFileCaptureSession {
     var avSpeed = AVAudioUnitVarispeed()
 #endif
     
-    public init(fileName: String) {
+    public init(fileURL: URL) {
         super.init()
         
-        let filePath: String = Bundle.main.path(forResource: "test", ofType: "wav")!
-        print("\(filePath)")
         do {
-            let fileURL: NSURL = NSURL(fileURLWithPath: filePath)
-            audioFile = try AVAudioFile(forReading: fileURL as URL)
+            audioFile = try AVAudioFile(forReading: fileURL)
             audioFileBuffer = AVAudioPCMBuffer(pcmFormat: audioFile!.processingFormat, frameCapacity: UInt32(audioFile!.length))
             try audioFile!.read(into: audioFileBuffer!)
             
             cmSampleBuffer = createCMSampleBufferFromAudioBuffer(pcmBuffer: audioFileBuffer!, withPresentationTime: CMTime.zero)
             
-            let item = AVPlayerItem(url: fileURL as URL)
+            let item = AVPlayerItem(url: fileURL)
             self.audioDuration = Double(item.asset.duration.value) / Double(item.asset.duration.timescale)
 
 #if AVBUFFEROUTPUT_TEST
