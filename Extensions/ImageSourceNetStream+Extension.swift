@@ -4,14 +4,9 @@ import AVFoundation
 import Foundation
 
 extension NetStream {
-    open func attachImage(_ imageSession: ImageSourceCaptureSession?, useImageSize: Bool = true) {
+    open func attachVideoSource(_ imageSession: ImageSourceCaptureSession?, useImageSize: Bool = true) {
         lockQueue.async {
-            self.mixer.videoIO.attachImage(imageSession, useImageSize: useImageSize)
-        }
-    }
-    open func attachPlayer(_ imageSession: ImageSourceCaptureSession?, useImageSize: Bool = true) {
-        lockQueue.async {
-            self.mixer.videoIO.attachImage(imageSession, useImageSize: useImageSize)
+            self.mixer.videoIO.attachVideoSource(imageSession, useImageSize: useImageSize)
         }
     }
 }

@@ -4,7 +4,7 @@ import AVFoundation
 import CoreImage
 
 extension VideoIOComponent {
-    func attachImage(_ imageSession: ImageSourceCaptureSession?, useImageSize: Bool = true) {
+    func attachVideoSource(_ imageSession: ImageSourceCaptureSession?, useImageSize: Bool = true) {
         guard let imageSession: ImageSourceCaptureSession = imageSession else {
             self.imageSession?.stopRunning()
             self.imageSession = nil

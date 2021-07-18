@@ -107,7 +107,7 @@ final class LiveViewController: UIViewController, UIDocumentPickerDelegate {
         
         let image = UIImage(named: "Icon.png")!
         NSLog("%f, %f", image.size.width, image.size.height)
-        rtmpStream.attachImage(ImageSourceSession(imageToCapture: image))
+        rtmpStream.attachVideoSource(ImageSourceSession(imageToCapture: image))
         
         #else
         
@@ -131,7 +131,7 @@ final class LiveViewController: UIViewController, UIDocumentPickerDelegate {
         // Observe end
         NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidReachEnd), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: self.player?.currentItem)
         player?.play()
-        rtmpStream.attachPlayer(ImageSourceSession(avPlayerItem: playerItem, avPlayerItemOutput: playerOutput, size: self.view!.bounds.size))
+        rtmpStream.attachVideoSource(ImageSourceSession(avPlayerItem: playerItem, avPlayerItemOutput: playerOutput, size: self.view!.bounds.size))
         
         #endif
         
