@@ -56,7 +56,9 @@ public class MP4Sampler {
     }
     
     public func rewindMP4File() {
-        file = fileOrg
+        lockQueue.async {
+            self.file = self.fileOrg
+        }
     }
 
     private func run() {
@@ -72,7 +74,9 @@ public class MP4Sampler {
 extension MP4Sampler: Running {
     // MARK: Running
     public func startRunning() {
-        file = fileOrg
+        lockQueue.async {
+            self.file = self.fileOrg
+        }
         loopQueue.async {
             self.isRunning.mutate { $0 = true }
             while self.isRunning.value {
