@@ -526,7 +526,7 @@ open class RTMPStream: NetStream {
             if self.currentPublishMediaKind == PublishMediaKind.PublishMediaFromMixing {
                 mixer.audioIO.encoder.delegate = muxer
                 mixer.videoIO.encoder.delegate = muxer
-            } else if self.currentPublishMediaKind == PublishMediaKind.PublishMediaFromMixing {
+            } else if self.currentPublishMediaKind == PublishMediaKind.PublishMediaFromSavedFile {
                 sampler?.delegate = muxer
             }
             mixer.startRunning()
