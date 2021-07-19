@@ -102,7 +102,7 @@ final class LiveViewController: UIViewController, UIDocumentPickerDelegate {
         
         #endif
         
-        #if false
+        #if true
         
         rtmpStream.attachCamera(DeviceUtil.device(withPosition: currentPosition)) { error in
             logger.warn(error.description)
@@ -177,6 +177,13 @@ final class LiveViewController: UIViewController, UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         // TODO
         print(urls)
+        if urls.count == 0 {
+            return
+        }
+        
+        let fileUrl = urls[0]
+        rtmpStream!.appendFile(fileUrl)
+        rtmpStream!.setPublishMediaKind(publishMediaKind: RTMPStream.PublishMediaKind.PublishMediaFromSavedFile)
     }
 
      func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
@@ -186,30 +193,26 @@ final class LiveViewController: UIViewController, UIDocumentPickerDelegate {
     // https://stackoverflow.com/questions/37296929/implement-document-picker-in-swift-ios
     // As usual don't forget to add iCloud support:
     @IBAction func selectFile(_ sender: UIButton) {
-        let types = [kUTTypeMPEG4, kUTTypeJPEG, kUTTypePNG, kUTTypeGIF, kUTTypeBMP]
-        let importMenu = UIDocumentPickerViewController(documentTypes: types as [String], in: .import)
+        rtmpStream!.attachCamera(nil)
 
-        if #available(iOS 11.0, *) {
-            importMenu.allowsMultipleSelection = true
-        }
+        let typeDict = [kUTTypeMPEG4] // [kUTTypeMPEG4, kUTTypeJPEG, kUTTypePNG, kUTTypeGIF, kUTTypeBMP]
+        let filePickerController = UIDocumentPickerViewController(documentTypes: typeDict as [String], in: .import)
 
-        importMenu.delegate = self
-        importMenu.modalPresentationStyle = .formSheet
+        filePickerController.delegate = self
+        filePickerController.modalPresentationStyle = .formSheet
         
-        #if false
         if #available(iOS 11.0, *) {
-            importMenu.allowsMultipleSelection = false
+            filePickerController.allowsMultipleSelection = false
         } else {
             // Fallback on earlier versions
         }
         if #available(iOS 13.0, *) {
-            importMenu.shouldShowFileExtensions = true
+            filePickerController.shouldShowFileExtensions = true
         } else {
             // Fallback on earlier versions
         }
-        #endif
-
-        present(importMenu, animated: true)
+        
+        present(filePickerController, animated: true)
     }
     
     @IBAction func on(slider: UISlider) {
