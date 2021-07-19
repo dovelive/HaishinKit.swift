@@ -251,9 +251,13 @@ open class AudioFileSession: NSObject, AudioFileCaptureSession {
     }
 
     open func onAudioFrameCaptureProcess(_ displayLink: CADisplayLink) {
+        guard let audioFileBuffer: AVAudioPCMBuffer = self.audioFileBuffer else {
+            return
+        }
+        
 //        delegate?.outputAudioFrame(sampleBuffer: createCMSampleBuffer(withPresentationTime: CMTimeMakeWithSeconds(displayLink.timestamp, preferredTimescale: Int32(22050)), sampleRate: 22050, numSamples: 2205)!)
         
-        let timeScale = audioFileBuffer!.format.streamDescription.pointee.mSampleRate
+        let timeScale = audioFileBuffer.format.streamDescription.pointee.mSampleRate
         
         guard let audioBufferTmp: AVAudioPCMBuffer = createAudioSampleBufferFromCMBuffer(cmBuffer: cmSampleBuffer!, startTimeOffset: self.currentAudioTime, timeInterval: self.timeInterval) else {
             return

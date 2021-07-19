@@ -6,9 +6,11 @@ import CoreImage
 extension VideoIOComponent {
     func attachVideoSource(_ imageSession: ImageSourceCaptureSession?, useImageSize: Bool = true) {
         guard let imageSession: ImageSourceCaptureSession = imageSession else {
+            return
+        }
+        if self.imageSession != nil {
             self.imageSession?.stopRunning()
             self.imageSession = nil
-            return
         }
         input = nil
         output = nil

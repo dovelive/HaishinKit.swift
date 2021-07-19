@@ -335,12 +335,10 @@ final class VideoIOComponent: IOComponent {
         if self.screen != nil {
             self.screen?.stopRunning()
             self.screen = nil
-            return
         }
         if self.imageSession != nil {
             self.imageSession?.stopRunning()
             self.imageSession = nil
-            return
         }
         #endif
 

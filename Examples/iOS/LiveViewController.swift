@@ -97,7 +97,8 @@ final class LiveViewController: UIViewController, UIDocumentPickerDelegate {
         
         #else
         
-        rtmpStream.attachAudioFile(AudioFileSession(fileURL: URL(string: "test.wav")!))
+        let audioUrl = Bundle.main.url(forResource: "test", withExtension: "wav")!
+        rtmpStream.attachAudioFile(AudioFileSession(fileURL: audioUrl))
         
         #endif
         

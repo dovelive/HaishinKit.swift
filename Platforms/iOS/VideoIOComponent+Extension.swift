@@ -30,9 +30,12 @@ extension VideoIOComponent {
 
     func attachScreen(_ screen: CustomCaptureSession?, useScreenSize: Bool = true) {
         guard let screen: CustomCaptureSession = screen else {
+            return
+        }
+        
+        if self.screen != nil {
             self.screen?.stopRunning()
             self.screen = nil
-            return
         }
         input = nil
         output = nil

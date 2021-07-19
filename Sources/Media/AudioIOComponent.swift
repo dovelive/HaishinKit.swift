@@ -146,9 +146,12 @@ final class AudioIOComponent: IOComponent, DisplayLinkedQueueClockReference {
 
     func attachAudioFile(_ audioFileSession: AudioFileSession?) {
         guard let audioFileSession: AudioFileSession = audioFileSession else {
+            return
+        }
+        
+        if self.audioFileSession != nil {
             self.audioFileSession?.stopRunning()
             self.audioFileSession = nil
-            return
         }
         
         input = nil
