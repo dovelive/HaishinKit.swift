@@ -24,7 +24,17 @@ final class ExampleRecorderDelegate: DefaultAVRecorderDelegate {
     }
 }
 
-final class LiveViewController: UIViewController, UIDocumentPickerDelegate {
+extension AVAsset {
+    var mediaSize: CGSize? {
+        if let track = tracks(withMediaType: .video).first {
+            let size = __CGSizeApplyAffineTransform(track.naturalSize, track.preferredTransform)
+            return CGSize(width: abs(size.width), height: abs(size.height))
+        }
+        return nil
+    }
+}
+
+final class LiveViewController: UIViewController, UIDocumentPickerDelegate, UIImagePickerControllerDelegate & UINavigationControllerDelegate {
     private static let maxRetryCount: Int = 5
 
     @IBOutlet private weak var lfView: MTHKView!
@@ -73,7 +83,7 @@ final class LiveViewController: UIViewController, UIDocumentPickerDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(didBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
     }
 
-    var player: AVPlayer?
+    var mp4FilePlayer: AVPlayer?
     
     override func viewWillAppear(_ animated: Bool) {
         logger.info("viewWillAppear")
@@ -125,17 +135,17 @@ final class LiveViewController: UIViewController, UIDocumentPickerDelegate {
         let playerOutput = AVPlayerItemVideoOutput(pixelBufferAttributes: pixBuffAttributes)
         playerItem.add(playerOutput)
         
-        player = AVPlayer(playerItem: playerItem)
+        mp4FilePlayer = AVPlayer(playerItem: playerItem)
         if false {
             var playerLayer: AVPlayerLayer?
-            playerLayer = AVPlayerLayer(player: player)
+            playerLayer = AVPlayerLayer(player: mp4FilePlayer)
             playerLayer!.frame = self.view!.bounds
             self.view!.layer.addSublayer(playerLayer!)
         }
         
         // Observe end
-        NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidReachEnd), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: self.player?.currentItem)
-        player?.play()
+        NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidReachEnd), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: self.mp4FilePlayer?.currentItem)
+        mp4FilePlayer?.play()
         rtmpStream.attachVideoSource(ImageSourceSession(avPlayerItem: playerItem, avPlayerItemOutput: playerOutput, size: self.view!.bounds.size))
         
         #endif
@@ -148,8 +158,8 @@ final class LiveViewController: UIViewController, UIDocumentPickerDelegate {
     
     // MARK: - Loop video when ended.
     @objc func playerItemDidReachEnd(notification: NSNotification) {
-        self.player?.seek(to: CMTime.zero)
-        self.player?.play()
+        self.mp4FilePlayer?.seek(to: CMTime.zero)
+        self.mp4FilePlayer?.play()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -181,7 +191,25 @@ final class LiveViewController: UIViewController, UIDocumentPickerDelegate {
             return
         }
         
-        let fileUrl = urls[0]
+        let newUrls = urls.compactMap { (url: URL) -> URL? in
+            // Create file URL to temporary folder
+            var tempURL = URL(fileURLWithPath: NSTemporaryDirectory())
+            // Apend filename (name+extension) to URL
+            tempURL.appendPathComponent(url.lastPathComponent)
+            do {
+                // If file with same name exists remove it (replace file with new one)
+                if FileManager.default.fileExists(atPath: tempURL.path) {
+                    try FileManager.default.removeItem(atPath: tempURL.path)
+                }
+                // Move file from app_id-Inbox to tmp/filename
+                try FileManager.default.moveItem(atPath: url.path, toPath: tempURL.path)
+                return tempURL
+            } catch {
+                print(error.localizedDescription)
+                return nil
+            }
+        }
+        let fileUrl = newUrls[0]
         rtmpStream!.appendFile(fileUrl)
         rtmpStream!.setPublishMediaKind(publishMediaKind: RTMPStream.PublishMediaKind.PublishMediaFromSavedFile)
     }
@@ -192,7 +220,7 @@ final class LiveViewController: UIViewController, UIDocumentPickerDelegate {
 
     // https://stackoverflow.com/questions/37296929/implement-document-picker-in-swift-ios
     // As usual don't forget to add iCloud support:
-    @IBAction func selectFile(_ sender: UIButton) {
+    @IBAction func selectMovieFile(_ sender: UIButton) {
         rtmpStream!.attachCamera(nil)
 
         let typeDict = [kUTTypeMPEG4] // [kUTTypeMPEG4, kUTTypeJPEG, kUTTypePNG, kUTTypeGIF, kUTTypeBMP]
@@ -213,6 +241,48 @@ final class LiveViewController: UIViewController, UIDocumentPickerDelegate {
         }
         
         present(filePickerController, animated: true)
+    }
+    
+    @IBAction func selectImageFile(_ sender: UIButton) {
+        var imagePickerController: UIImagePickerController?
+
+            imagePickerController = UIImagePickerController()
+            imagePickerController!.sourceType = .photoLibrary
+            imagePickerController!.delegate = self
+            
+            imagePickerController!.mediaTypes = [kUTTypeImage as String, kUTTypeMovie as String]
+            present(imagePickerController!, animated: true)
+    }
+    
+    internal func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        let mediaType = info[.mediaType] as? String
+        if mediaType == "public.image" {
+            guard let image = info[.originalImage] as? UIImage else {
+                return
+            }
+            NSLog("%f, %f", image.size.width, image.size.height)
+            self.rtmpStream!.attachVideoSource(ImageSourceSession(imageToCapture: image))
+        } else if mediaType == "public.movie" {
+            guard let fileUrl = info[.mediaURL] as? URL else {
+                return
+            }
+            let asset = AVAsset(url: fileUrl)
+            let playerItem = AVPlayerItem(asset: asset)
+            
+            // Setup AVPlayerItemVideoOutput with the required pixelbuffer attributes.
+            let pixBuffAttributes: [String : AnyObject] = [kCVPixelBufferPixelFormatTypeKey as String :  Int(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange) as AnyObject] // kCVPixelFormatType_32BGRA
+            let playerOutput = AVPlayerItemVideoOutput(pixelBufferAttributes: pixBuffAttributes)
+            playerItem.add(playerOutput)
+            
+            mp4FilePlayer = AVPlayer(playerItem: playerItem)
+            
+            // Observe end
+            NotificationCenter.default.addObserver(self, selector: #selector(playerItemDidReachEnd), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: self.mp4FilePlayer?.currentItem)
+            mp4FilePlayer?.play()
+            rtmpStream!.attachVideoSource(ImageSourceSession(avPlayerItem: playerItem, avPlayerItemOutput: playerOutput, size: asset.mediaSize!))
+        }
+
+        self.dismiss(animated: true, completion: nil)
     }
     
     @IBAction func on(slider: UISlider) {
