@@ -439,7 +439,7 @@ open class RTMPStream: NetStream {
         case PublishMediaFromMixing = "media_mixing"
     }
     
-    private var currentPublishMediaKind: PublishMediaKind = PublishMediaKind.PublishMediaFromSavedFile
+    private var currentPublishMediaKind: PublishMediaKind = PublishMediaKind.PublishMediaFromMixing
     open func setPublishMediaKind(publishMediaKind: PublishMediaKind) {
         self.currentPublishMediaKind = publishMediaKind
     }
