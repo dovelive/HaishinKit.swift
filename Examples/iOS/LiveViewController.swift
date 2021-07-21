@@ -24,6 +24,37 @@ final class ExampleRecorderDelegate: DefaultAVRecorderDelegate {
     }
 }
 
+extension UIImage {
+    enum ContentMode {
+        case contentFill
+        case contentAspectFill
+        case contentAspectFit
+    }
+    
+    func resize(withSize size: CGSize, contentMode: ContentMode = .contentAspectFill) -> UIImage? {
+        let aspectWidth = size.width / self.size.width
+        let aspectHeight = size.height / self.size.height
+        
+        switch contentMode {
+        case .contentFill:
+            return resize(withSize: size)
+        case .contentAspectFit:
+            let aspectRatio = min(aspectWidth, aspectHeight)
+            return resize(withSize: CGSize(width: self.size.width * aspectRatio, height: self.size.height * aspectRatio))
+        case .contentAspectFill:
+            let aspectRatio = max(aspectWidth, aspectHeight)
+            return resize(withSize: CGSize(width: self.size.width * aspectRatio, height: self.size.height * aspectRatio))
+        }
+    }
+    
+    private func resize(withSize size: CGSize) -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(size, false, self.scale)
+        defer { UIGraphicsEndImageContext() }
+        draw(in: CGRect(x: 0.0, y: 0.0, width: size.width, height: size.height))
+        return UIGraphicsGetImageFromCurrentImageContext()
+    }
+}
+
 extension AVAsset {
     var mediaSize: CGSize? {
         if let track = tracks(withMediaType: .video).first {
@@ -246,19 +277,22 @@ final class LiveViewController: UIViewController, UIDocumentPickerDelegate, UIIm
     @IBAction func selectImageFile(_ sender: UIButton) {
         var imagePickerController: UIImagePickerController?
 
-            imagePickerController = UIImagePickerController()
-            imagePickerController!.sourceType = .photoLibrary
-            imagePickerController!.delegate = self
-            
-            imagePickerController!.mediaTypes = [kUTTypeImage as String, kUTTypeMovie as String]
-            present(imagePickerController!, animated: true)
+        imagePickerController = UIImagePickerController()
+        imagePickerController!.sourceType = .photoLibrary
+        imagePickerController!.delegate = self
+        
+        imagePickerController!.mediaTypes = [kUTTypeImage as String, kUTTypeMovie as String]
+        present(imagePickerController!, animated: true)
     }
     
     internal func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         let mediaType = info[.mediaType] as? String
         if mediaType == "public.image" {
-            guard let image = info[.originalImage] as? UIImage else {
+            guard var image = info[.originalImage] as? UIImage else {
                 return
+            }
+            if image.size.width > 720 {
+                image = image.resize(withSize: CGSize(width: 0, height: 720), contentMode: .contentAspectFill)!
             }
             NSLog("%f, %f", image.size.width, image.size.height)
             self.rtmpStream!.attachVideoSource(ImageSourceSession(imageToCapture: image))
