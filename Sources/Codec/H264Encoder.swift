@@ -24,9 +24,12 @@ public final class H264Encoder {
         #endif
         case maxKeyFrameIntervalDuration
         case scalingMode
+        case invalidateSession
 
         public var keyPath: AnyKeyPath {
             switch self {
+            case .invalidateSession:
+                return \H264Encoder.invalidateSession
             case .muted:
                 return \H264Encoder.muted
             case .width:
